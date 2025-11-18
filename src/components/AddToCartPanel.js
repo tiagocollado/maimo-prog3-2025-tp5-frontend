@@ -8,14 +8,16 @@ export default function AddToCartPanel({ id, name, price, image }) {
   const [qty, setQty] = useState(1);
 
   const handleAdd = () => {
-    // Ajustá según la firma real de tu contexto
     addToCart?.({ id, name, price, image, qty });
   };
 
   return (
     <div className="flex flex-col gap-3 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-4">
       <div className="flex items-center gap-3">
-        <label htmlFor="qty" className="text-sm text-zinc-700 dark:text-zinc-300">
+        <label
+          htmlFor="qty"
+          className="text-sm text-zinc-700 dark:text-zinc-300"
+        >
           Cantidad
         </label>
         <div className="inline-flex items-center rounded-xl border border-zinc-200 dark:border-zinc-800">

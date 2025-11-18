@@ -1,118 +1,121 @@
-import React from 'react';
-import { Formik, Form, Field } from 'formik';
+import React from "react";
+import { Formik, Form, Field } from "formik";
 
 function validateEmail(value) {
   let error;
   if (!value) {
-    error = 'Required';
+    error = "Requerido";
   } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value)) {
-    error = 'Invalid email address';
+    error = "Email inválido";
   }
   return error;
 }
 
-function validateUsername(value) {
+function validateRequired(value) {
   let error;
-  if (value === 'admin') {
-    error = 'Nice try!';
-  }
-  return error;
-}
-function validateEmptyText(value) {
-  let error;
-  if (value === '') {
-    error = 'Required!';
+  if (!value || value.trim() === "") {
+    error = "Requerido";
   }
   return error;
 }
 
-export const CheckoutForm = ({handleAddOrder}) => (
-      <div className="flex items-center justify-center ">
-      <div className="w-full max-w-md rounded-2xl bg-gray p-8 shadow-lg">
-        <h2 className="mb-6 text-center text-2xl font-bold text-gray-800">
-          Place Order
-        </h2>
+export const CheckoutForm = ({ handleAddOrder, setOrderPlaced }) => {
+  return (
+    <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-6">
+      <h2 className="text-2xl font-bold text-gray-100 mb-6">
+        Información de Envío
+      </h2>
 
-        <Formik
-          initialValues={{
-            username: "",
-            company:"",
-            email: "",
-          }}
-          onSubmit={(values) => {
-            handleAddOrder(values)
-          }}
-        >
-          {({ errors, touched }) => (
-            <Form className="space-y-5">
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Email
-                </label>
-                <Field
-                  name="email"
-                  type="email"
-                  validate={validateEmail}
-                  className="mt-1 w-full rounded-lg border border-gray-300 p-2 text-gray-100 focus:border-indigo-500 focus:ring-indigo-500"
-                  placeholder="you@example.com"
-                />
-                {errors.email && touched.email && (
-                  <div className="mt-1 text-sm text-red-600">
-                    {errors.email}
-                  </div>
-                )}
-              </div>  
-              <div>
-                <label
-                  htmlFor="company"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Empresa
-                </label>
-                <Field
-                  name="company"
-                  validate={validateEmptyText}
-                  className="mt-1 w-full rounded-lg border border-gray-300 p-2 text-gray-100 focus:border-indigo-500 focus:ring-indigo-500"
-                  placeholder="Enter username"
-                />
-                {errors.company && touched.company && (
-                  <div className="mt-1 text-sm text-red-600">
-                    {errors.company}
-                  </div>
-                )}
-              </div>
-              <div>
-                <label
-                  htmlFor="username"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Username
-                </label>
-                <Field
-                  name="username"
-                  validate={validateUsername}
-                  className="mt-1 w-full rounded-lg border border-gray-300 p-2 text-gray-100 focus:border-indigo-500 focus:ring-indigo-500"
-                  placeholder="Enter username"
-                />
-                {errors.username && touched.username && (
-                  <div className="mt-1 text-sm text-red-600">
-                    {errors.username}
-                  </div>
-                )}
-              </div>
-
-              <button
-                type="submit"
-                className="w-full rounded-lg bg-indigo-600 px-4 py-2 font-semibold text-white transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+      <Formik
+        initialValues={{
+          name: "",
+          email: "",
+          address: "",
+        }}
+        onSubmit={async (values, { setSubmitting }) => {
+          const success = await handleAddOrder(values);
+          if (success) {
+            setOrderPlaced(true);
+          } else {
+            alert(
+              "Hubo un error al procesar tu pedido. Por favor intenta nuevamente."
+            );
+          }
+          setSubmitting(false);
+        }}
+      >
+        {({ errors, touched, isSubmitting }) => (
+          <Form className="space-y-5">
+            <div>
+              <label
+                htmlFor="name"
+                className="block text-sm font-semibold text-gray-100 mb-2"
               >
-                Submit
-              </button>
-            </Form>
-          )}
-        </Formik>
-      </div>
+                Nombre Completo
+              </label>
+              <Field
+                name="name"
+                type="text"
+                validate={validateRequired}
+                className="w-full rounded-lg border border-neutral-700 bg-neutral-800 p-3 text-gray-100 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none transition"
+                placeholder="Juan Pérez"
+              />
+              {errors.name && touched.name && (
+                <div className="mt-2 text-sm text-red-400">{errors.name}</div>
+              )}
+            </div>
+
+            <div>
+              <label
+                htmlFor="email"
+                className="block text-sm font-semibold text-gray-100 mb-2"
+              >
+                Email
+              </label>
+              <Field
+                name="email"
+                type="email"
+                validate={validateEmail}
+                className="w-full rounded-lg border border-neutral-700 bg-neutral-800 p-3 text-gray-100 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none transition"
+                placeholder="juan@example.com"
+              />
+              {errors.email && touched.email && (
+                <div className="mt-2 text-sm text-red-400">{errors.email}</div>
+              )}
+            </div>
+
+            <div>
+              <label
+                htmlFor="address"
+                className="block text-sm font-semibold text-gray-100 mb-2"
+              >
+                Dirección
+              </label>
+              <Field
+                name="address"
+                as="textarea"
+                rows="3"
+                validate={validateRequired}
+                className="w-full rounded-lg border border-neutral-700 bg-neutral-800 p-3 text-gray-100 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none transition resize-none"
+                placeholder="Calle, número, ciudad, código postal"
+              />
+              {errors.address && touched.address && (
+                <div className="mt-2 text-sm text-red-400">
+                  {errors.address}
+                </div>
+              )}
+            </div>
+
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full rounded-lg bg-amber-500 px-6 py-3 font-bold text-neutral-900 transition hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSubmitting ? "Procesando..." : "Confirmar Pedido"}
+            </button>
+          </Form>
+        )}
+      </Formik>
     </div>
-);
+  );
+};

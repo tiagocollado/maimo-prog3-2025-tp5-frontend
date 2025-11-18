@@ -1,56 +1,72 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useShopContext } from "@/contexts/ShopContext";
+import { ShoppingCart } from "lucide-react";
 
 export default function Navbar() {
   const { cartQty } = useShopContext();
+  const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-50 bg-white/80 dark:bg-zinc-950/70 backdrop-blur supports-[backdrop-filter]:bg-white/60 border-b border-zinc-100 dark:border-zinc-800">
-      <nav className="container mx-auto px-4 h-14 flex items-center justify-between">
+    <header className="sticky top-0 z-50 bg-neutral-900/80 backdrop-blur border-b border-neutral-800">
+      <nav className="container mx-auto px-4 h-16 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Link
             href="/"
-            className="font-semibold tracking-tight text-zinc-900 dark:text-zinc-100"
+            className="font-bold tracking-tight text-xl text-gray-100 cursor-pointer"
           >
-            Modo Berserk
+            <span className="text-amber-500">El Ritual</span> del Tono
           </Link>
-          <span className="hidden sm:inline-block text-xs px-2 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300">
-            beta
-          </span>
         </div>
 
-        <ul className="hidden md:flex items-center gap-6 text-sm text-zinc-700 dark:text-zinc-300">
+        <ul className="hidden md:flex items-center gap-6 text-sm">
           <li>
-            <Link href="/about" className="hover:underline underline-offset-4">
-              About
+            <Link
+              href="/"
+              className={`transition cursor-pointer ${
+                pathname === "/"
+                  ? "text-amber-500 font-bold"
+                  : "text-gray-400 hover:text-amber-500"
+              }`}
+            >
+              Inicio
             </Link>
           </li>
           <li>
-            <a href="#productos" className="hover:underline underline-offset-4">
-              Productos
-            </a>
+            <Link
+              href="/artists"
+              className={`transition cursor-pointer ${
+                pathname.startsWith("/artists")
+                  ? "text-amber-500 font-bold"
+                  : "text-gray-400 hover:text-amber-500"
+              }`}
+            >
+              Artistas
+            </Link>
           </li>
           <li>
-            <a href="#productos" className="hover:underline underline-offset-4">
-              Categorías
-            </a>
-          </li>
-          <li>
-            <Link href="/contact" className="hover:underline underline-offset-4">
-              Contacto
+            <Link
+              href="/products"
+              className={`transition cursor-pointer ${
+                pathname.startsWith("/products")
+                  ? "text-amber-500 font-bold"
+                  : "text-gray-400 hover:text-amber-500"
+              }`}
+            >
+              Equipamiento
             </Link>
           </li>
         </ul>
 
         <Link
-          href="/checkout"
-          className="inline-flex items-center gap-2 text-sm rounded-xl border border-zinc-200 dark:border-zinc-800 px-3 py-1.5 hover:border-zinc-300 dark:hover:border-zinc-700 transition"
+          href="/cart"
+          className="inline-flex items-center gap-2 text-sm rounded-lg bg-neutral-800 border border-neutral-700 px-4 py-2 hover:bg-neutral-700 transition text-gray-100 cursor-pointer"
         >
-          <span className="i-lucide-shopping-cart" aria-hidden />
-          <span>Carrito</span>
-          <span className="ml-1 inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 text-xs px-1">
+          <ShoppingCart className="w-4 h-4" />
+          <span className="hidden sm:inline">Carrito</span>
+          <span className="inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-amber-500 text-neutral-900 text-xs font-bold px-1.5">
             {cartQty()}
           </span>
         </Link>

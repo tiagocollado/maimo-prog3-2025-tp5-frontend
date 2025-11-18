@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   useState,
@@ -6,35 +6,45 @@ import {
   useContext,
   createContext,
   useCallback,
-} from 'react';
-import axios from 'axios';
+} from "react";
+import axios from "axios";
 const ShopContext = createContext();
 
 export const ShopContextProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
   const [products, setProducts] = useState([]);
   const [product, setProduct] = useState({});
+  const [categories, setCategories] = useState([]);
+  const [category, setCategory] = useState({});
 
   const handleAddToCart = (product) => {
-    let productToAdd = {};
-    const findProduct = cart.find(
-      (productInCart) => productInCart._id === product._id
-    );
-    if (findProduct) {
-      productToAdd = { ...findProduct, qty: findProduct.qty + product.qty };
-    } else {
-      productToAdd = product;
-    }
+    setCart((prevCart) => {
+      const findProduct = prevCart.find(
+        (productInCart) => productInCart._id === product._id
+      );
 
-    const filteredCart = cart.filter(
-      (productInCart) => productInCart._id !== product._id
-    );
-    setCart([...filteredCart, productToAdd]);
+      if (product.qty <= 0) {
+        return prevCart.filter(
+          (productInCart) => productInCart._id !== product._id
+        );
+      }
+
+      if (findProduct) {
+        return prevCart.map((productInCart) =>
+          productInCart._id === product._id
+            ? { ...productInCart, qty: product.qty }
+            : productInCart
+        );
+      }
+      return [...prevCart, product];
+    });
   };
 
   const getAllProducts = useCallback(async () => {
     try {
-      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/products`);
+      const res = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/products`
+      );
       setProducts(res.data.products);
     } catch (error) {
       console.log(error);
@@ -43,21 +53,52 @@ export const ShopContextProvider = ({ children }) => {
 
   const getOneProduct = useCallback(async (id) => {
     try {
-      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/products/${id}`);
+      const res = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/products/${id}`
+      );
       setProduct(res.data.product);
     } catch (error) {
       console.log(error);
     }
   }, []);
 
-  useEffect(() => {
-    getAllProducts();
+  const getAllCategories = useCallback(async () => {
+    try {
+      const res = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/categories`
+      );
+      setCategories(res.data.categories || res.data);
+    } catch (error) {
+      console.log(error);
+    }
   }, []);
 
-  const cartQty = () => cart.length; //
+  const getOneCategory = useCallback(async (slug) => {
+    try {
+      const res = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/categories/${slug}`
+      );
+      setCategory(res.data.category || res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
+  const clearCart = () => {
+    setCart([]);
+  };
+
+  useEffect(() => {
+    getAllProducts();
+    getAllCategories();
+  }, []);
+
+  const cartQty = () => cart.length;
 
   const cartTotal = cart.reduce(
-    (acc, product) => acc + product.qty * product.price,0);
+    (acc, product) => acc + product.qty * product.price,
+    0
+  );
 
   const addOrder = async (userValues) => {
     const reducedCart = cart.map((product) => {
@@ -73,25 +114,22 @@ export const ShopContextProvider = ({ children }) => {
     const orderValues = {
       user: userValues,
       products: reducedCart,
-      total: cartTotal
+      total: cartTotal,
     };
-    console.log('my order is', orderValues);
+    console.log("my order is", orderValues);
 
     try {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/orders`,
         orderValues
       );
-    
 
-      return true
-
-
-
+      clearCart();
+      return true;
     } catch (error) {
-      console.log('error', error);
+      console.log("error", error);
 
-      return false
+      return false;
     }
   };
 
@@ -100,10 +138,14 @@ export const ShopContextProvider = ({ children }) => {
       value={{
         cart,
         handleAddToCart,
+        clearCart,
         cartQty,
         products,
         product,
         getOneProduct,
+        categories,
+        category,
+        getOneCategory,
         addOrder,
         cartTotal,
       }}
@@ -116,7 +158,7 @@ export const ShopContextProvider = ({ children }) => {
 export const useShopContext = () => {
   const context = useContext(ShopContext);
   if (!context) {
-    throw new Error('useShopContext must be used within a ShopContextProvider');
+    throw new Error("useShopContext must be used within a ShopContextProvider");
   }
   return context;
 };
