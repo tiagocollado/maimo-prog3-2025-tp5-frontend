@@ -58,6 +58,18 @@ export default function Navbar() {
               Equipamiento
             </Link>
           </li>
+          <li>
+            <Link
+              href="/about"
+              className={`transition cursor-pointer ${
+                pathname.startsWith("/about")
+                  ? "text-amber-500 font-bold"
+                  : "text-gray-400 hover:text-amber-500"
+              }`}
+            >
+              About
+            </Link>
+          </li>
         </ul>
 
         <Link
