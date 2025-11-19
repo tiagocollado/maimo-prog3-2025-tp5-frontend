@@ -27,7 +27,7 @@ export default function AboutPage() {
     {
       name: "Luis Alberto Spinetta",
       role: "El Poeta de la Luz",
-      image: "/images/artists/spinetta.jpg",
+      image: "/images/artists/spinetta.webp",
       slug: "luis-alberto-spinetta",
     },
   ];

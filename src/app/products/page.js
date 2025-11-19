@@ -3,6 +3,7 @@
 import { useShopContext } from "@/contexts/ShopContext";
 import ProductCard from "@/components/ProductCard";
 import { useState } from "react";
+import { LoadingSkeleton } from "@/components/LoadingSkeleton";
 
 export default function ProductsPage() {
   const { products } = useShopContext();
@@ -70,12 +71,25 @@ export default function ProductsPage() {
       </div>
 
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {filteredProducts.map((product) => (
-          <ProductCard key={product._id} product={product} />
-        ))}
+        {products.length === 0 ? (
+          <>
+            <LoadingSkeleton />
+            <LoadingSkeleton />
+            <LoadingSkeleton />
+            <LoadingSkeleton />
+            <LoadingSkeleton />
+            <LoadingSkeleton />
+            <LoadingSkeleton />
+            <LoadingSkeleton />
+          </>
+        ) : (
+          filteredProducts.map((product) => (
+            <ProductCard key={product._id} product={product} />
+          ))
+        )}
       </div>
 
-      {filteredProducts.length === 0 && (
+      {products.length > 0 && filteredProducts.length === 0 && (
         <div className="text-center py-12">
           <p className="text-gray-400 text-lg">
             No se encontraron productos en esta categoría.
