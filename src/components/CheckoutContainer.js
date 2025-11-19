@@ -3,6 +3,7 @@
 import { useShopContext } from "@/contexts/ShopContext";
 import { CheckoutForm } from "./FormCheckout";
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 
 const CheckoutContainer = () => {
@@ -29,12 +30,12 @@ const CheckoutContainer = () => {
               Tu pedido ha sido procesado exitosamente. Recibirás un email de
               confirmación pronto.
             </p>
-            <a
+            <Link
               href="/"
               className="inline-block bg-amber-500 text-neutral-900 px-6 py-3 rounded-lg font-semibold hover:bg-amber-600 transition"
             >
               Volver al Inicio
-            </a>
+            </Link>
           </div>
         </div>
       </div>
